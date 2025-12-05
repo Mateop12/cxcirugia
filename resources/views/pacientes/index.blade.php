@@ -31,6 +31,7 @@
                 <th>Identificación</th>
                 <th>Área</th>
                 <th>Estado</th>
+                <th>Procedimiento</th>
                 <th>Acciones</th>
             </tr>
         </thead>
@@ -41,8 +42,9 @@
                     <td>{{ \Carbon\Carbon::parse($paciente->hora_cita)->format('g:i A') }}</td>
                     <td>{{ $paciente->nombre }} {{ $paciente->apellido }}</td>
                     <td>{{ $paciente->identificacion }}</td>
-                    <td>{{ $paciente->area->nombre }}</td>
-                    <td>{{ $paciente->estado->nombre }}</td>
+                    <td>{{ $paciente->area ? $paciente->area->nombre : 'Sin Área' }}</td>
+                    <td>{{ $paciente->estado ? $paciente->estado->nombre : 'Sin Estado' }}</td>
+                    <td>{{ $paciente->procedimiento }}</td>
                     <td>
                         <a href="{{ route('pacientes.edit', $paciente->id) }}" class="btn btn-warning btn-sm">Editar</a>
                         <form action="{{ route('pacientes.destroy', $paciente->id) }}" method="POST" style="display:inline;">

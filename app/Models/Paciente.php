@@ -13,7 +13,7 @@ class Paciente extends Model
 {
     protected $fillable = [
         'nombre', 'apellido', 'identificacion', 'fecha_nacimiento', 'genero', 'edad', 'email', 
-        'telefono', 'direccion', 'area_id', 'estado_id', 'fecha_cita', 'hora_cita', 'observacion'
+        'telefono', 'direccion', 'procedimiento', 'area_id', 'estado_id','fecha_cita', 'hora_cita', 'observacion'
     ];
 
     public function area()

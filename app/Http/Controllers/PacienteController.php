@@ -24,7 +24,8 @@ class PacienteController extends Controller
             ->when($search, function ($query, $search) {
                 return $query->where('nombre', 'like', "%{$search}%")
                             ->orWhere('apellido', 'like', "%{$search}%")
-                            ->orWhere('identificacion', 'like', "%{$search}%");
+                            ->orWhere('identificacion', 'like', "%{$search}%")
+                            ->orWhere('procedimiento', 'like',  "%{$search}%" );
             })
             ->paginate(10); // Usamos paginación para grandes cantidades de pacientes
 
@@ -50,16 +51,17 @@ class PacienteController extends Controller
 
         return $request->validate([
             'nombre' => 'required',
-            'apellido' => 'required',
+            'apellido' => 'nullable',
             'identificacion' => ['required', $uniqueRule],
-            'fecha_nacimiento' => 'required|date',
-            'genero' => 'required',
-            'edad' => 'required|integer',
+            'fecha_nacimiento' => 'nullable|date',
+            'genero' => 'nullable',
+            'edad' => 'nullable|integer',
             'email' => 'nullable|email',
             'telefono' => 'nullable|string',
             'direccion' => 'nullable|string',
-            'area_id' => 'required|exists:areas,id',
-            'estado_id' => 'required|exists:estados,id',
+            'procedimiento' => 'required|string',
+            'area_id' => 'nullable|exists:areas,id',
+            'estado_id' => 'nullable|exists:estados,id',
             'fecha_cita' => 'required|date',
             'hora_cita' => 'required|date_format:g:i A',  // Formato de 12 horas con AM/PM
             'observacion' => 'nullable|string',
@@ -128,17 +130,21 @@ class PacienteController extends Controller
         return redirect()->route('pacientes.index')->with('success', 'Paciente eliminado exitosamente');
     }
 
-    public function salaEspera()
-    {
-        $fechaHoy = Carbon::today()->toDateString();
-        // Obtener los pacientes que están activos o tienen cita programada
-        $pacientes = Paciente::with('area', 'estado')
-            ->where('estado_id', '!=', 9) // Aquí puedes filtrar por el estado que sea relevante
-            ->whereDate('fecha_cita', $fechaHoy)
-            ->orderBy('hora_cita', 'desc')
-            ->get();
+public function salaEspera()
+{
+    // Fecha actual (zona horaria Colombia)
+    $fechaHoy = Carbon::now('America/Bogota')->toDateString();
 
-        return view('pacientes.salaEspera', compact('pacientes'));
-    }
+    // Pacientes con cita hoy
+    $pacientes = Paciente::with('area', 'estado')
+        ->where('estado_id', '!=', 9) // Aquí puedes filtrar por el estado
+        ->whereDate('fecha_cita', $fechaHoy)
+        ->orderBy('hora_cita', 'asc')
+        ->get();
+
+    // Retornar la vista con los pacientes del día
+    return view('pacientes.salaEspera', compact('pacientes'));
+}
+    
 
 }

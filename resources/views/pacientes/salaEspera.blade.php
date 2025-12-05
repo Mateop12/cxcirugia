@@ -1,164 +1,141 @@
 @extends('layouts.app')
 
 @section('content')
-<div class="d-flex" style="height: 100vh;">
-    <!-- Video institucional (40%) -->
-    <div class="col-6" style="flex: 0 0 40%;">
-        <video id="videoPlayer" autoplay muted style="width: 100%; height: 100%; object-fit: cover;">
+<div class="d-flex vh-100 overflow-hidden">
+
+    <div class="video-container flex-shrink-0" style="width: 40%;">
+        <video id="videoPlayer" autoplay muted playsinline class="w-100 h-100 object-cover rounded-end">
             <source id="videoSource" src="{{ asset('videos/video1.mp4') }}" type="video/mp4">
             Tu navegador no soporta videos HTML5.
         </video>
     </div>
 
-    <!-- Sección de la lista de pacientes -->
-    <div class="col-6 d-flex justify-content-center align-items-center" style="background-color: #e3f2fd;">
-        <div>
-            <div class="text-center mb-4">
-                <img src="{{ asset('images/logoClinic.png') }}" alt="Clínica Genezen" style="height: 120px;">
-                <h1 class="display-4" style="color: #007bff;">Sala de Espera</h1>
-            </div>
-            <table class="table table-hover table-bordered text-center" id="tablaPacientes">
-                <thead class="bg-primary text-white">
-                    <tr>
-                        <th>FECHA</th>
-                        <th>HORA</th>
-                        <th>PACIENTE</th>
-                        <th>IDENTIFICACIÓN</th>
-                        <th>ÁREA</th>
-                        <th>ESTADO</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach($pacientes as $paciente)
+    <div class="content-container flex-grow-1 d-flex flex-column justify-content-center align-items-center p-4" style="background-color: #e3f2fd;">
+  
+        <div class="text-center mb-4">
+            <img src="{{ asset('images/logoClinic.png') }}" alt="Clínica Genezen" style="height: 120px;">
+            <h1 class="display-5 mt-3 fw-bold text-primary">Sala de Espera</h1>
+        </div>
+
+        <!-- Tabla de pacientes -->
+        <div class="card shadow-lg border-0 rounded-4 w-100" style="max-width: 1200px;">
+            <div class="card-body p-0">
+                <table id="tablaPacientes" class="table table-hover table-striped mb-0 text-center align-middle">
+                    <thead class="bg-primary text-white">
                         <tr>
-                            <td>{{ \Carbon\Carbon::parse($paciente->fecha_cita)->format('Y-m-d') }}</td>
-                            <td>{{ \Carbon\Carbon::parse($paciente->hora_cita)->format('g:i A') }}</td>
-                            <td>{{ $paciente->nombre }} {{ $paciente->apellido }}</td>
-                            <td>****{{ substr($paciente->identificacion, -4) }}</td>
-                            <td class="font-weight-bold text-uppercase"><strong>{{ $paciente->area->nombre }}</strong></td>
-                            <td class="estado-{{ Str::slug($paciente->estado->nombre) }} font-weight-bold text-uppercase"><strong>{{ $paciente->estado->nombre }}</strong></td>
+                            <th>FECHA</th>
+                            <th>HORA</th>
+                            <th>PACIENTE</th>
+                            <th>IDENTIFICACIÓN</th>
+                            <th>ÁREA</th>
+                            <th>ESTADO</th>
+                            <th>PROCEDIMIENTO</th>
                         </tr>
-                    @endforeach
-                </tbody>
-            </table>
+                    </thead>
+                    <tbody>
+                        @forelse($pacientes as $paciente)
+                            <tr>
+                                <td>{{ \Carbon\Carbon::parse($paciente->fecha_cita)->format('Y-m-d') }}</td>
+                                <td>{{ \Carbon\Carbon::parse($paciente->hora_cita)->format('g:i A') }}</td>
+                                <td class="fw-semibold">{{ $paciente->nombre }} </td>
+                                <td>****{{ substr($paciente->identificacion, -4) }}</td>
+                                <td><span class="badge bg-info text-dark px-3 py-2">{{ $paciente->area?->nombre ?? 'No asignada' }}</span></td>
+                                <td><span class="badge bg-info text-dark px-3 py-2">{{ $paciente->estado?->nombre ?? 'Sin estado' }}</span></td>
+                                <td>{{ ucfirst($paciente->procedimiento) }}</td>
+                            </tr>
+                        @empty
+                            <tr>
+                                <td colspan="7" class="text-center py-4 text-muted">
+                                    No hay pacientes con cita para hoy.
+                                </td>
+                            </tr>
+                        @endforelse
+                    </tbody>
+                </table>
+            </div>
         </div>
     </div>
 </div>
 
-<!-- JavaScript para actualizar la lista automáticamente -->
+<!-- Auto-actualización de la tabla -->
 <script>
     function actualizarTabla() {
         fetch('{{ route('pacientes.salaEspera') }}')
             .then(response => response.text())
             .then(html => {
-                // Obtener solo el tbody de la respuesta y actualizar solo esa parte
                 const nuevaTabla = new DOMParser().parseFromString(html, 'text/html').querySelector('tbody').innerHTML;
                 document.querySelector('#tablaPacientes tbody').innerHTML = nuevaTabla;
             })
             .catch(error => console.error('Error actualizando la tabla:', error));
     }
-
-    // Actualizar la tabla cada 15 segundos
     setInterval(actualizarTabla, 15000);
 </script>
 
-<!-- Script para cambiar videos en bucle -->
+<!-- Cambio de videos -->
 <script>
-    // Lista de videos
     const videos = [
         "{{ asset('videos/video1.mp4') }}",
-        "{{ asset('videos/video2.mp4') }}"
+        "{{ asset('videos/video2.mp4') }}",
+        "{{ asset('videos/video3.mp4') }}",
+        "{{ asset('videos/video4.mp4') }}",
+        "{{ asset('videos/video5.mp4') }}",
+        "{{ asset('videos/video6.mp4') }}",
+        "{{ asset('videos/video7.mp4') }}"
     ];
-
-    let videoIndex = 0; // Índice del video actual
-
+    let videoIndex = 0;
     const videoPlayer = document.getElementById('videoPlayer');
     const videoSource = document.getElementById('videoSource');
-
-    // Función que cambia al siguiente video
-    function playNextVideo() {
-        videoIndex = (videoIndex + 1) % videos.length; // Pasar al siguiente video o volver al primero
-        videoSource.src = videos[videoIndex]; // Cambiar la fuente del video
-        videoPlayer.load(); // Recargar el video
-        videoPlayer.play(); // Reproducir el nuevo video
-    }
-
-    // Cuando termina el video, cambia al siguiente
-    videoPlayer.addEventListener('ended', playNextVideo);
+    videoPlayer.addEventListener('ended', () => {
+        videoIndex = (videoIndex + 1) % videos.length;
+        videoSource.src = videos[videoIndex];
+        videoPlayer.load();
+        videoPlayer.play();
+    });
 </script>
 
-
 <style>
-    /* Aumentar el tamaño del logo */
-    img {
-        height: 150px; /* Ajusta según sea necesario */
+    body {
+        background-color: #e0f7fa;
+        margin: 0;
+        overflow: hidden;
     }
 
-    /* Encabezados grandes y agradables */
-    h1.display-3 {
-        color: #007bff;
-        font-size: 3.5rem;
-        font-weight: bold;
+    .object-cover {
+        object-fit: cover;
     }
 
-    .lead {
-        font-size: 1.5rem;
-        color: #333;
-    }
-
-    /* Tabla estilizada */
-    .table {
-        background-color: white;
-        border-radius: 8px;
-        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    .video-container video {
+        border-right: 6px solid #fff;
+        box-shadow: 4px 0 10px rgba(0, 0, 0, 0.15);
     }
 
     .table thead th {
-        background-color: #0044cc;
+        background-color: #0044cc !important;
         color: white;
         font-weight: bold;
         text-transform: uppercase;
         text-align: center;
-        font-size: 1.25rem;
+        font-size: 1.1rem;
     }
 
     .table tbody td {
         text-align: center;
-        font-size: 1.5rem;
-        padding: 20px;
+        font-size: 1.2rem;
+        padding: 15px;
         color: #333;
     }
 
-    .table tbody tr:nth-child(odd) {
+    .table-striped > tbody > tr:nth-of-type(odd) {
         background-color: #f8f9fa;
     }
 
-    /* Color de fondo general */
-    body {
-        background-color: #e0f7fa; /* Azul claro relajante */
+    .card {
+        backdrop-filter: blur(5px);
     }
 
-    /* Asegúrate de que los dos lados ocupen el 50% de la pantalla */
-    .d-flex > .col-6 {
-        flex: 1;
-        height: 100%;
+    .badge {
+        font-size: 0.95rem;
     }
-
-    /* Opcional: un borde entre las dos mitades */
-    .col-6 {
-        border-right: 1px solid #e0e0e0;
-    }
-
-    /* Estilos personalizados para el video */
-    video {
-        border-radius: 10px;
-        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-    }
-
-     /* Ajustar el video para cubrir toda la mitad */
-    video {
-        object-fit: cover;
-    }
-
 </style>
+
 @endsection
