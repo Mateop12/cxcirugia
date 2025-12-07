@@ -2,7 +2,7 @@
 
 @section('content')
 <div class="container">
-    <h1>Lista de Pacientes</h1>
+    <h1>Lista de Pacientesss</h1>
     <div>
         <a href="{{ route('pacientes.create') }}" class="btn btn-primary">Agregar Paciente</a>
         <a href="{{ route('areas.index') }}" class="btn btn-secondary">Gestionar Áreas</a>
