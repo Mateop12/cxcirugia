@@ -15,6 +15,10 @@
         <div class="text-center mb-4">
             <img src="{{ asset('images/logoClinic.png') }}" alt="Clínica Genezen" style="height: 120px;">
             <h1 class="display-5 mt-3 fw-bold text-primary">Sala de Espera</h1>
+            <!-- Botón para activar sonido -->
+            <button id="btnActivarSonido" class="btn btn-success btn-lg mt-2" onclick="activarSonido()">
+                🔔 Activar Alertas de Sonido
+            </button>
         </div>
 
         <!-- Tabla de pacientes -->
@@ -57,18 +61,137 @@
     </div>
 </div>
 
-<!-- Auto-actualización de la tabla -->
+<!-- Audio de alerta -->
+<audio id="alertSound" preload="auto">
+    <source src="{{ asset('sounds/alerta.mp3') }}" type="audio/mpeg">
+</audio>
+
+<!-- Auto-actualización de la tabla con detección de cambios -->
 <script>
+    // Almacenar estados actuales de los pacientes
+    let estadosAnteriores = {};
+    let primeraActualizacion = true;
+    let sonidoActivado = false;
+    let pacientesConCambio = [];
+
+    // Activar sonido (requiere interacción del usuario)
+    function activarSonido() {
+        const audio = document.getElementById('alertSound');
+        audio.play().then(() => {
+            audio.pause();
+            audio.currentTime = 0;
+            sonidoActivado = true;
+            document.getElementById('btnActivarSonido').style.display = 'none';
+            console.log('Sonido activado correctamente');
+        }).catch(error => {
+            console.log('Error activando sonido:', error);
+            alert('No se pudo activar el sonido. Intenta de nuevo.');
+        });
+    }
+
+    // Inicializar estados al cargar la página
+    function inicializarEstados() {
+        const filas = document.querySelectorAll('#tablaPacientes tbody tr');
+        filas.forEach(fila => {
+            const celdas = fila.querySelectorAll('td');
+            if (celdas.length >= 6) {
+                const identificacion = celdas[3].textContent.trim();
+                const estado = celdas[5].textContent.trim();
+                estadosAnteriores[identificacion] = estado;
+            }
+        });
+    }
+
+    // Reproducir sonido de alerta
+    function reproducirAlerta() {
+        if (!sonidoActivado) {
+            console.log('Sonido no activado. El usuario debe hacer clic en el botón primero.');
+            return;
+        }
+        const audio = document.getElementById('alertSound');
+        if (audio) {
+            audio.currentTime = 0;
+            audio.play().catch(error => {
+                console.log('No se pudo reproducir el sonido:', error);
+            });
+        }
+    }
+
+    // Actualizar tabla y detectar cambios
     function actualizarTabla() {
         fetch('{{ route('pacientes.salaEspera') }}')
             .then(response => response.text())
             .then(html => {
-                const nuevaTabla = new DOMParser().parseFromString(html, 'text/html').querySelector('tbody').innerHTML;
-                document.querySelector('#tablaPacientes tbody').innerHTML = nuevaTabla;
+                const parser = new DOMParser();
+                const doc = parser.parseFromString(html, 'text/html');
+                const nuevaTabla = doc.querySelector('tbody');
+                
+                if (!nuevaTabla) return;
+
+                let hayCambios = false;
+                const nuevosEstados = {};
+                pacientesConCambio = [];
+
+                // Revisar nuevos estados
+                const filas = nuevaTabla.querySelectorAll('tr');
+                filas.forEach(fila => {
+                    const celdas = fila.querySelectorAll('td');
+                    if (celdas.length >= 6) {
+                        const identificacion = celdas[3].textContent.trim();
+                        const estado = celdas[5].textContent.trim();
+                        nuevosEstados[identificacion] = estado;
+
+                        // Comparar con estado anterior
+                        if (!primeraActualizacion && estadosAnteriores[identificacion] !== undefined) {
+                            if (estadosAnteriores[identificacion] !== estado) {
+                                hayCambios = true;
+                                pacientesConCambio.push(identificacion);
+                                console.log(`Cambio detectado: Paciente ${identificacion} cambió de "${estadosAnteriores[identificacion]}" a "${estado}"`);
+                            }
+                        }
+                    }
+                });
+
+                // Actualizar estados anteriores
+                estadosAnteriores = nuevosEstados;
+                primeraActualizacion = false;
+
+                // Actualizar la tabla en el DOM
+                document.querySelector('#tablaPacientes tbody').innerHTML = nuevaTabla.innerHTML;
+
+                // Reproducir sonido y resaltar si hay cambios
+                if (hayCambios) {
+                    reproducirAlerta();
+                    resaltarPacientes();
+                }
             })
             .catch(error => console.error('Error actualizando la tabla:', error));
     }
-    setInterval(actualizarTabla, 15000);
+
+    // Resaltar pacientes con cambio de estado
+    function resaltarPacientes() {
+        const filas = document.querySelectorAll('#tablaPacientes tbody tr');
+        filas.forEach(fila => {
+            const celdas = fila.querySelectorAll('td');
+            if (celdas.length >= 6) {
+                const identificacion = celdas[3].textContent.trim();
+                if (pacientesConCambio.includes(identificacion)) {
+                    fila.classList.add('fila-cambio');
+                    setTimeout(() => {
+                        fila.classList.remove('fila-cambio');
+                    }, 5000);
+                }
+            }
+        });
+    }
+
+    // Inicializar al cargar la página
+    document.addEventListener('DOMContentLoaded', function() {
+        inicializarEstados();
+    });
+
+    // Actualizar cada 3 segundos para tiempo casi real
+    setInterval(actualizarTabla, 3000);
 </script>
 
 <!-- Cambio de videos -->
@@ -135,6 +258,25 @@
 
     .badge {
         font-size: 0.95rem;
+    }
+
+    /* Animación para resaltar filas con cambio de estado */
+    .fila-cambio {
+        animation: resaltarFila 1s ease-in-out infinite;
+    }
+
+    @keyframes resaltarFila {
+        0%, 100% {
+            background-color: #ffeb3b !important;
+        }
+        50% {
+            background-color: #4caf50 !important;
+        }
+    }
+
+    .fila-cambio td {
+        color: #000 !important;
+        font-weight: bold;
     }
 </style>
 
