@@ -127,7 +127,7 @@
 
                 <div class="text-center">
                     <button type="submit" class="btn btn-primary">{{ isset($paciente) ? 'Actualizar Paciente' : 'Agregar Paciente' }}</button>
-                    <a href="{{ route('pacientes.index') }}" class="btn btn-secondary">Cancelar</a>
+                    <a href="{{ route('turnero.panel') }}" class="btn btn-secondary">Cancelar</a>
                 </div>
             </form>
         </div>
