@@ -18,310 +18,315 @@
 
         body {
             font-family: 'Inter', sans-serif;
-            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
-            min-height: 100vh;
+            background-color: #f8f9fa;
+            height: 100vh;
+            width: 100vw;
+            overflow: hidden;
             display: flex;
             flex-direction: column;
-            overflow: hidden;
-            color: white;
         }
 
-        /* Header */
-        .header {
+        /* --- Header (Fixed Height) --- */
+        #header {
+            height: 15vh; /* Proportional height */
+            min-height: 100px;
+            background-color: white;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 20px 40px;
-            background: rgba(0, 0, 0, 0.3);
-            backdrop-filter: blur(10px);
+            padding: 0 4vw;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            z-index: 10;
         }
 
-        .header img {
-            height: 80px;
+        .header-left {
+            display: flex;
+            flex-direction: column;
         }
 
         .header-title {
-            font-size: 2.5rem;
-            font-weight: 700;
+            font-size: 5vh;
+            font-weight: 900;
+            color: #0088cc;
+            margin: 0;
+            line-height: 1;
             text-transform: uppercase;
-            letter-spacing: 4px;
-            background: linear-gradient(90deg, #00d4ff, #7c3aed);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
         }
 
-        .current-time {
-            font-size: 2rem;
+        .header-subtitle {
+            font-size: 2vh;
+            color: #aaa;
+            margin-top: 5px;
             font-weight: 600;
-            color: #00d4ff;
         }
 
-        /* Botón activar sonido */
+        .header-right img {
+            height: 10vh;
+            width: auto;
+        }
+
+        /* --- Main Body (Flexible) --- */
+        #main-body {
+            flex: 1;
+            display: flex;
+            padding: 2vh 2vw;
+            gap: 2vw;
+            overflow: hidden;
+            height: calc(85vh - 8vh); /* Remaining height approx */
+        }
+
+        /* Left Side: Clock + Video */
+        #left-side {
+            width: 45%;
+            display: flex;
+            flex-direction: column;
+            gap: 2vh;
+        }
+
+        .clock-container {
+            background: white;
+            padding: 1.5vh;
+            border-radius: 12px;
+            text-align: center;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+        }
+
+        #clockDisplay {
+            font-size: 6vh;
+            font-weight: 800;
+            color: #333;
+            display: block;
+            line-height: 1;
+        }
+
+        .video-container {
+            flex: 1;
+            background: #000;
+            border-radius: 12px;
+            overflow: hidden;
+            position: relative;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .video-container video {
+            width: 100%;
+            height: 100%;
+            object-fit: contain; /* Crucial: prevents video from breaking layout */
+        }
+
+        /* Right Side: Turns List */
+        #right-side {
+            flex: 1;
+            background: white;
+            border-radius: 12px;
+            display: flex;
+            flex-direction: column;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.05);
+            overflow: hidden;
+        }
+
+        .table-header {
+            display: flex;
+            background-color: #f1f5f9;
+            padding: 2vh 0;
+            border-bottom: 2px solid #e2e8f0;
+        }
+
+        .col-header {
+            flex: 1;
+            text-align: center;
+            font-size: 3vh;
+            font-weight: 800;
+            color: #1e293b;
+        }
+
+        #turnos-list {
+            flex: 1;
+            overflow-y: auto;
+            padding: 0;
+        }
+
+        .turno-row {
+            display: flex;
+            padding: 2.5vh 0;
+            border-bottom: 1px solid #f1f5f9;
+            align-items: center;
+        }
+
+        .turno-row:nth-child(even) {
+            background-color: #f8fafc;
+        }
+
+        .turno-row.reciente {
+            background-color: #e0f2fe;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% { background-color: #e0f2fe; }
+            50% { background-color: #bae6fd; }
+            100% { background-color: #e0f2fe; }
+        }
+
+        .turno-number {
+            flex: 1;
+            text-align: center;
+            font-size: 7vh;
+            font-weight: 900;
+            color: #0284c7;
+        }
+
+        .turno-destination {
+            flex: 1;
+            text-align: center;
+            font-size: 4vh;
+            font-weight: 700;
+            color: #334155;
+        }
+
+        .empty-state {
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 3vh;
+            color: #94a3b8;
+            font-weight: 500;
+        }
+
+        /* --- Footer (Fixed Height) --- */
+        #footer {
+            height: 8vh;
+            min-height: 50px;
+            background-color: #0088cc;
+            display: flex;
+            align-items: center;
+            overflow: hidden; /* Hide overflow for marquee */
+            white-space: nowrap;
+            color: white;
+            font-weight: 600;
+            position: relative;
+        }
+
+        #footer p {
+            display: inline-block;
+            padding-left: 100%; /* Start off-screen */
+            animation: marquee 20s linear infinite;
+            font-size: 4vh; /* Larger font */
+            margin: 0;
+        }
+
+        @keyframes marquee {
+            0% { transform: translate(0, 0); }
+            100% { transform: translate(-100%, 0); }
+        }
+
+        /* --- Utils --- */
         .btn-sonido {
             position: fixed;
-            top: 20px;
-            right: 20px;
-            padding: 15px 30px;
-            font-size: 1.2rem;
-            font-weight: 600;
-            background: linear-gradient(135deg, #10b981, #059669);
+            bottom: 10vh;
+            right: 2vw;
+            background: #fbbf24;
+            color: #000;
             border: none;
+            padding: 1.5vh 3vh;
             border-radius: 50px;
-            color: white;
+            font-weight: bold;
+            font-size: 2vh;
             cursor: pointer;
-            z-index: 1000;
-            box-shadow: 0 4px 20px rgba(16, 185, 129, 0.4);
-            transition: all 0.3s ease;
+            z-index: 100;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+            transition: transform 0.2s;
         }
 
         .btn-sonido:hover {
             transform: scale(1.05);
-            box-shadow: 0 6px 30px rgba(16, 185, 129, 0.6);
         }
 
         .btn-sonido.hidden {
             display: none;
         }
-
-        /* Main content */
-        .main-content {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            padding: 40px;
-        }
-
-        /* Turnos grid */
-        .turnos-container {
-            display: flex;
-            flex-direction: column;
-            gap: 20px;
-            max-width: 1400px;
-            margin: 0 auto;
-            width: 100%;
-        }
-
-        .turno-card {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            background: rgba(255, 255, 255, 0.1);
-            backdrop-filter: blur(10px);
-            border-radius: 20px;
-            padding: 30px 50px;
-            border: 2px solid rgba(255, 255, 255, 0.1);
-            transition: all 0.4s ease;
-        }
-
-        .turno-card:first-child {
-            background: linear-gradient(135deg, rgba(124, 58, 237, 0.4), rgba(0, 212, 255, 0.3));
-            border-color: #7c3aed;
-            transform: scale(1.02);
-        }
-
-        .turno-card.reciente {
-            animation: pulsarTurno 1s ease-in-out infinite;
-            border-color: #10b981;
-            box-shadow: 0 0 40px rgba(16, 185, 129, 0.5);
-        }
-
-        @keyframes pulsarTurno {
-            0%, 100% {
-                background: linear-gradient(135deg, rgba(16, 185, 129, 0.5), rgba(5, 150, 105, 0.3));
-                transform: scale(1.02);
-            }
-            50% {
-                background: linear-gradient(135deg, rgba(16, 185, 129, 0.8), rgba(5, 150, 105, 0.6));
-                transform: scale(1.05);
-            }
-        }
-
-        .turno-numero {
-            display: flex;
-            align-items: center;
-            gap: 20px;
-        }
-
-        .turno-label {
-            font-size: 1.5rem;
-            font-weight: 600;
-            color: rgba(255, 255, 255, 0.7);
-            text-transform: uppercase;
-            letter-spacing: 2px;
-        }
-
-        .turno-number {
-            font-size: 5rem;
-            font-weight: 900;
-            background: linear-gradient(135deg, #00d4ff, #7c3aed);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            line-height: 1;
-        }
-
-        .turno-flecha {
-            font-size: 3rem;
-            color: rgba(255, 255, 255, 0.5);
-            margin: 0 20px;
-        }
-
-        .turno-destino {
-            display: flex;
-            flex-direction: column;
-            align-items: flex-end;
-            text-align: right;
-        }
-
-        .destino-label {
-            font-size: 1.2rem;
-            color: rgba(255, 255, 255, 0.6);
-            text-transform: uppercase;
-            letter-spacing: 2px;
-            margin-bottom: 5px;
-        }
-
-        .destino-nombre {
-            font-size: 2.5rem;
-            font-weight: 700;
-            color: #10b981;
-            text-transform: uppercase;
-        }
-
-        .turno-hora {
-            font-size: 1rem;
-            color: rgba(255, 255, 255, 0.4);
-            margin-top: 10px;
-        }
-
-        /* Empty state */
-        .empty-state {
-            text-align: center;
-            padding: 80px 40px;
-        }
-
-        .empty-state .icon {
-            font-size: 6rem;
-            margin-bottom: 20px;
-            opacity: 0.5;
-        }
-
-        .empty-state h2 {
-            font-size: 2.5rem;
-            font-weight: 600;
-            color: rgba(255, 255, 255, 0.7);
-            margin-bottom: 10px;
-        }
-
-        .empty-state p {
-            font-size: 1.5rem;
-            color: rgba(255, 255, 255, 0.4);
-        }
-
-        /* Footer */
-        .footer {
-            padding: 20px 40px;
-            background: rgba(0, 0, 0, 0.3);
-            text-align: center;
-        }
-
-        .footer p {
-            color: rgba(255, 255, 255, 0.5);
-            font-size: 1rem;
-        }
-
-        /* Responsive */
-        @media (max-width: 1200px) {
-            .turno-number {
-                font-size: 4rem;
-            }
-            .destino-nombre {
-                font-size: 2rem;
-            }
-        }
-
-        @media (max-width: 768px) {
-            .header-title {
-                font-size: 1.5rem;
-            }
-            .turno-card {
-                flex-direction: column;
-                text-align: center;
-                padding: 20px;
-            }
-            .turno-destino {
-                align-items: center;
-                text-align: center;
-                margin-top: 20px;
-            }
-            .turno-flecha {
-                display: none;
-            }
-        }
     </style>
 </head>
 <body>
-    <!-- Botón para activar sonido -->
-    <button id="btnActivarSonido" class="btn-sonido" onclick="activarSonido()">
-        🔔 Activar Alertas de Sonido
-    </button>
 
-    <header class="header">
-        <img src="{{ asset('images/logoClinic.png') }}" alt="Clínica Genezen">
-        <h1 class="header-title">Sistema de Turnos</h1>
-        <div class="current-time" id="currentTime">--:--:--</div>
-    </header>
-
-    <main class="main-content">
-        <div class="turnos-container" id="turnosContainer">
-            @if($turnosActivos->count() > 0)
-                @foreach($turnosActivos as $index => $turno)
-                    <div class="turno-card {{ $turno->turno_llamado_at && $turno->turno_llamado_at->diffInSeconds(now()) < 5 ? 'reciente' : '' }}" data-id="{{ $turno->id }}">
-                        <div class="turno-numero">
-                            <span class="turno-label">Turno</span>
-                            <span class="turno-number">{{ $turno->numero_turno }}</span>
-                        </div>
-                        <span class="turno-flecha">→</span>
-                        <div class="turno-destino">
-                            <span class="destino-label">Dirigirse a</span>
-                            <span class="destino-nombre">{{ $turno->destino ? $turno->destino->nombre : 'Sin destino' }}</span>
-                            <span class="turno-hora">Llamado: {{ $turno->turno_llamado_at ? $turno->turno_llamado_at->format('H:i') : '--:--' }}</span>
-                        </div>
-                    </div>
-                @endforeach
-            @else
-                <div class="empty-state">
-                    <div class="icon">🎫</div>
-                    <h2>Sin turnos activos</h2>
-                    <p>Los turnos llamados aparecerán aquí automáticamente</p>
-                </div>
-            @endif
+    <!-- Header -->
+    <div id="header">
+        <div class="header-left">
+            <h1 class="header-title">TURNERO</h1>
+            <!-- <p class="header-subtitle">Pantalla completa</p> -->
         </div>
-    </main>
+        <div class="header-right">
+            <img src="{{ asset('images/logocondromed.png') }}" alt="Clínica Genezen">
+        </div>
+    </div>
 
-    <footer class="footer">
-        <p>Clínica Genezen - Sistema de Turnero</p>
-    </footer>
+    <!-- Main Body -->
+    <div id="main-body">
+        <!-- Left Side -->
+        <div id="left-side">
+            <div class="clock-container">
+                <span id="clockDisplay">--:--</span>
+            </div>
+            <div class="video-container">
+                <video id="videoPlayer" autoplay muted playsinline>
+                    <source id="videoSource" src="{{ asset('videos/Video-institucional.mp4') }}" type="video/mp4">
+                </video>
+            </div>
+        </div>
 
-    <!-- Audio de alerta -->
+        <!-- Right Side -->
+        <div id="right-side">
+            <div class="table-header">
+                <div class="col-header">Turno</div>
+                <div class="col-header">Pasar a:</div>
+            </div>
+            <div id="turnos-list">
+                <!-- JS will populate this -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <div id="footer">
+        <p>Estar pendiente a la pantalla </p>
+    </div>
+
+    <!-- Audio & Controls -->
     <audio id="alertSound" preload="auto">
         <source src="{{ asset('sounds/alerta.mp3') }}" type="audio/mpeg">
     </audio>
 
+    <button id="btnActivarSonido" class="btn-sonido" onclick="activarSonido()">
+        🔊 Activar Sonido
+    </button>
+
     <script>
-        // Configuración
+        // --- Configuración ---
         const config = {
             refreshInterval: {{ $config['refresh_interval'] ?? 3000 }},
-            tiempoParpadeo: {{ $config['tiempo_parpadeo'] ?? 5000 }},
             sonidoActivo: {{ ($config['sonido_activo'] ?? 'true') === 'true' ? 'true' : 'false' }}
         };
 
         let sonidoActivado = false;
-        let ultimosTurnos = [];
 
-        // Activar sonido (requiere interacción del usuario)
+        // --- Reloj ---
+        function updateClock() {
+            const now = new Date();
+            let hours = now.getHours();
+            const minutes = now.getMinutes().toString().padStart(2, '0');
+            const ampm = hours >= 12 ? 'PM' : 'AM';
+            hours = hours % 12;
+            hours = hours ? hours : 12; 
+            document.getElementById('clockDisplay').textContent = `${hours}:${minutes} ${ampm}`;
+        }
+        setInterval(updateClock, 1000);
+        updateClock();
+
+        // --- Sonido ---
         function activarSonido() {
             const audio = document.getElementById('alertSound');
             audio.play().then(() => {
@@ -329,95 +334,89 @@
                 audio.currentTime = 0;
                 sonidoActivado = true;
                 document.getElementById('btnActivarSonido').classList.add('hidden');
-                console.log('Sonido activado correctamente');
-            }).catch(error => {
-                console.log('Error activando sonido:', error);
-                alert('No se pudo activar el sonido. Intenta de nuevo.');
-            });
+            }).catch(e => console.error("Error audio:", e));
         }
 
-        // Reproducir sonido de alerta
         function reproducirAlerta() {
             if (!sonidoActivado || !config.sonidoActivo) return;
             const audio = document.getElementById('alertSound');
             if (audio) {
                 audio.currentTime = 0;
-                audio.play().catch(error => {
-                    console.log('No se pudo reproducir el sonido:', error);
-                });
+                audio.play().catch(e => console.error("Error play:", e));
             }
         }
 
-        // Actualizar reloj
-        function actualizarReloj() {
-            const now = new Date();
-            const timeStr = now.toLocaleTimeString('es-CO', {
-                hour: '2-digit',
-                minute: '2-digit',
-                second: '2-digit',
-                hour12: false
-            });
-            document.getElementById('currentTime').textContent = timeStr;
-        }
+        // --- Turnos ---
+        let turnosEnPantalla = {}; // Mapa ID -> Timestamp
 
-        // Actualizar turnos
         function actualizarTurnos() {
             fetch('{{ route("turnero.api.activos") }}')
                 .then(response => response.json())
                 .then(data => {
-                    const container = document.getElementById('turnosContainer');
+                    const container = document.getElementById('turnos-list');
                     const turnos = data.turnos;
-
-                    // Detectar nuevos turnos
-                    const nuevosIds = turnos.map(t => t.id);
-                    const turnosNuevos = turnos.filter(t => t.es_reciente && !ultimosTurnos.includes(t.id));
                     
-                    if (turnosNuevos.length > 0) {
+                    let playSound = false;
+                    const nuevosTurnosEnPantalla = {};
+
+                    turnos.forEach(t => {
+                        nuevosTurnosEnPantalla[t.id] = t.llamado_timestamp;
+                        
+                        if (t.es_reciente) {
+                            // Si es nuevo O si el timestamp cambió (rellamado)
+                            if (!turnosEnPantalla[t.id] || turnosEnPantalla[t.id] !== t.llamado_timestamp) {
+                                playSound = true;
+                            }
+                        }
+                    });
+
+                    if (playSound) {
                         reproducirAlerta();
                     }
 
-                    ultimosTurnos = nuevosIds;
+                    turnosEnPantalla = nuevosTurnosEnPantalla;
 
-                    // Renderizar turnos
+                    // Render
                     if (turnos.length === 0) {
-                        container.innerHTML = `
-                            <div class="empty-state">
-                                <div class="icon">🎫</div>
-                                <h2>Sin turnos activos</h2>
-                                <p>Los turnos llamados aparecerán aquí automáticamente</p>
-                            </div>
-                        `;
+                        container.innerHTML = '<div class="empty-state">Esperando turnos...</div>';
                     } else {
-                        container.innerHTML = turnos.map((turno, index) => `
-                            <div class="turno-card ${turno.es_reciente ? 'reciente' : ''}" data-id="${turno.id}">
-                                <div class="turno-numero">
-                                    <span class="turno-label">Turno</span>
-                                    <span class="turno-number">${turno.numero_turno}</span>
-                                </div>
-                                <span class="turno-flecha">→</span>
-                                <div class="turno-destino">
-                                    <span class="destino-label">Dirigirse a</span>
-                                    <span class="destino-nombre">${turno.destino}</span>
-                                    <span class="turno-hora">Llamado: ${turno.turno_llamado_at}</span>
-                                </div>
+                        container.innerHTML = turnos.map(t => `
+                            <div class="turno-row ${t.es_reciente ? 'reciente' : ''}" data-id="${t.id}">
+                                <div class="turno-number">${t.numero_turno}</div>
+                                <div class="turno-destination">${t.destino}</div>
                             </div>
                         `).join('');
                     }
                 })
-                .catch(error => console.error('Error actualizando turnos:', error));
+                .catch(e => console.error("Error fetch:", e));
         }
 
-        // Inicializar
-        document.addEventListener('DOMContentLoaded', function() {
-            actualizarReloj();
-            setInterval(actualizarReloj, 1000);
-            
-            // Guardar turnos actuales
-            document.querySelectorAll('.turno-card').forEach(card => {
-                ultimosTurnos.push(parseInt(card.dataset.id));
+        // --- Video Playlist ---
+        const videos = [
+            "{{ asset('videos/video1.mp4') }}",
+            "{{ asset('videos/video2.mp4') }}",
+            "{{ asset('videos/video3.mp4') }}",
+            "{{ asset('videos/video4.mp4') }}",
+            "{{ asset('videos/video5.mp4') }}",
+            "{{ asset('videos/video6.mp4') }}",
+            "{{ asset('videos/video7.mp4') }}"
+        ];
+        let videoIndex = 0;
+        const videoPlayer = document.getElementById('videoPlayer');
+        const videoSource = document.getElementById('videoSource');
+        
+        if (videoPlayer) {
+            videoPlayer.addEventListener('ended', () => {
+                videoIndex = (videoIndex + 1) % videos.length;
+                videoSource.src = videos[videoIndex];
+                videoPlayer.load();
+                videoPlayer.play();
             });
+        }
 
-            // Actualizar turnos periódicamente
+        // --- Init ---
+        document.addEventListener('DOMContentLoaded', () => {
+            actualizarTurnos();
             setInterval(actualizarTurnos, config.refreshInterval);
         });
     </script>

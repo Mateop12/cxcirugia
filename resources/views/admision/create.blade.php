@@ -38,22 +38,7 @@
                                 <input type="text" name="apellido" class="form-control form-control-lg">
                             </div>
 
-                            {{-- Área --}}
-                            <div class="col-md-6">
-                                <label class="form-label">Área Médica</label>
-                                <select name="area_id" class="form-select form-select-lg">
-                                    <option value="">Seleccionar...</option>
-                                    @foreach($areas as $area)
-                                        <option value="{{ $area->id }}">{{ $area->nombre }}</option>
-                                    @endforeach
-                                </select>
-                            </div>
-
-                            {{-- Procedimiento --}}
-                            <div class="col-md-6">
-                                <label class="form-label">Procedimiento</label>
-                                <input type="text" name="procedimiento" class="form-control form-control-lg" placeholder="Ej: Consulta General">
-                            </div>
+                            
 
                             <hr class="my-4">
 

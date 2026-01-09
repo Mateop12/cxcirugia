@@ -107,17 +107,20 @@
                         <div class="p-3 mb-2 bg-light rounded border-start border-success border-4">
                             <div class="d-flex justify-content-between align-items-start mb-2">
                                 <span class="badge bg-success fs-5 px-3 py-2">#{{ $paciente->numero_turno }}</span>
-                                <button class="btn btn-sm btn-outline-primary" onclick="rellamarTurno({{ $paciente->id }})">
-                                    🔔 Rellamar
-                                </button>
+                                <div class="d-flex gap-1">
+                                    <button class="btn btn-sm btn-outline-primary" onclick="rellamarTurno({{ $paciente->id }})" title="Rellamar">
+                                        🔔
+                                    </button>
+                                    <button class="btn btn-sm btn-outline-danger" onclick="eliminarTurno({{ $paciente->id }})" title="Quitar de pantalla">
+                                        ✖️
+                                    </button>
+                                </div>
                             </div>
                             <strong>{{ $paciente->nombre }}</strong>
                             <br>
                             <span class="text-success fw-bold">→ {{ $paciente->destino?->nombre ?? 'Sin destino' }}</span>
                             <br>
-                            <small class="text-muted">
-                                Llamado: {{ $paciente->turno_llamado_at ? $paciente->turno_llamado_at->format('H:i') : '--:--' }}
-                            </small>
+                            
                         </div>
                     @empty
                         <p class="text-muted text-center py-4">No hay turnos llamados</p>
@@ -267,6 +270,33 @@
             }
         } catch (error) {
             showAlert('Error al rellamar turno', 'error');
+        }
+    }
+
+    async function eliminarTurno(pacienteId) {
+        if (!confirm('¿Quitar este turno de la pantalla?')) return;
+
+        try {
+            const response = await fetch('{{ route('turnero.eliminar') }}', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': csrfToken
+                },
+                body: JSON.stringify({
+                    paciente_id: pacienteId
+                })
+            });
+            const data = await response.json();
+            if (data.success) {
+                showAlert(data.message);
+                // No reload needed if auto-refresh is on, but let's do it to be instant
+                setTimeout(() => location.reload(), 500);
+            } else {
+                showAlert(data.message, 'error');
+            }
+        } catch (error) {
+            showAlert('Error al eliminar turno', 'error');
         }
     }
 

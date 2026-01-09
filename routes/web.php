@@ -67,6 +67,7 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/turnero/rellamar', [App\Http\Controllers\TurneroController::class, 'rellamarTurno'])->name('turnero.rellamar');
     Route::post('/turnero/asignar-destino', [App\Http\Controllers\TurneroController::class, 'asignarDestino'])->name('turnero.asignarDestino');
     Route::post('/turnero/generar/{paciente}', [App\Http\Controllers\TurneroController::class, 'generarTurno'])->name('turnero.generar');
+    Route::post('/turnero/eliminar', [App\Http\Controllers\TurneroController::class, 'eliminarTurno'])->name('turnero.eliminar');
     Route::post('/turnero/reiniciar', [App\Http\Controllers\TurneroController::class, 'reiniciarTurnos'])->name('turnero.reiniciar');
     
     // Gestión de Destinos

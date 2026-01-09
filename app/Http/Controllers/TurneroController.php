@@ -47,6 +47,7 @@ class TurneroController extends Controller
                     'nombre' => $paciente->nombre,
                     'destino' => $paciente->destino ? $paciente->destino->nombre : 'Sin destino',
                     'turno_llamado_at' => $paciente->turno_llamado_at->format('H:i'),
+                    'llamado_timestamp' => $paciente->turno_llamado_at->toIso8601String(),
                     'es_reciente' => $paciente->turno_llamado_at->diffInSeconds(now()) < ((int) ($config['tiempo_parpadeo'] ?? 5000) / 1000)
                 ];
             });
@@ -188,6 +189,29 @@ class TurneroController extends Controller
         return response()->json([
             'success' => true,
             'message' => 'Turnos del día reiniciados correctamente'
+        ]);
+    }
+
+    /**
+     * Eliminar turno (limpiar datos de turno del paciente)
+     */
+    public function eliminarTurno(Request $request)
+    {
+        $request->validate([
+            'paciente_id' => 'required|exists:pacientes,id'
+        ]);
+
+        $paciente = Paciente::findOrFail($request->paciente_id);
+        
+        $paciente->update([
+            'numero_turno' => null,
+            'turno_llamado_at' => null,
+            'destino_id' => null
+        ]);
+
+        return response()->json([
+            'success' => true,
+            'message' => "Turno eliminado de la pantalla"
         ]);
     }
 
