@@ -54,9 +54,13 @@
                             <option value="Otro" {{ (isset($paciente) && $paciente->genero == 'Otro') ? 'selected' : '' }}>Otro</option>
                         </select>
                     </div>
-                    <div class="col-md-6">
+                    <!-- <div class="col-md-6">
                         <label for="edad" class="form-label">Edad</label>
                         <input type="number" name="edad" class="form-control" value="{{ isset($paciente) ? $paciente->edad : old('edad') }}" >
+                    </div> -->
+                    <div class="col-md-6">
+                        <label for="edad" class="form-label">Procedimiento</label>
+                        <input type="procedimiento" name="procedimiento" class="form-control" value="{{ isset($paciente) ? $paciente->procedimiento : old('procedimiento') }}" required>
                     </div>
                 </div>
 
@@ -65,14 +69,11 @@
                         <label for="email" class="form-label">Email</label>
                         <input type="email" name="email" class="form-control" value="{{ isset($paciente) ? $paciente->email : old('email') }}">
                     </div> -->
-                    <div class="col-md-6">
+                    <!--<div class="col-md-6">
                         <label for="telefono" class="form-label">Teléfono</label>
                         <input type="text" name="telefono" class="form-control" value="{{ isset($paciente) ? $paciente->telefono : old('telefono') }}">
-                    </div>
-                    <div class="col-md-6">
-                        <label for="edad" class="form-label">Procedimiento</label>
-                        <input type="procedimiento" name="procedimiento" class="form-control" value="{{ isset($paciente) ? $paciente->procedimiento : old('procedimiento') }}" required>
-                    </div>
+                    </div>-->
+                    
                 </div>
                 <div class="row mb-3">
                 <div class="col-md-6">
