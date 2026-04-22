@@ -111,11 +111,11 @@
                 <div class="row mb-3">
                     <div class="col-md-6">
                         <label for="fecha_cita" class="form-label">Fecha de la Cirugía</label>
-                        <input type="date" name="fecha_cita" class="form-control" value="{{ isset($paciente) ? $paciente->fecha_cita : old('fecha_cita') }}" required>
+                        <input type="date" name="fecha_cita" class="form-control" value="{{ isset($paciente) ? $paciente->fecha_cita : old('fecha_cita') }}">
                     </div>
                     <div class="col-md-6">
                         <label for="hora_cita" class="form-label">Hora de la Cirugía</label>
-                        <input type="text" name="hora_cita" class="form-control" id="horaCita" value="{{ isset($paciente) ? $paciente->hora_cita : old('hora_cita') }}" required>
+                        <input type="text" name="hora_cita" class="form-control" id="horaCita" value="{{ isset($paciente) ? $paciente->hora_cita : old('hora_cita') }}">
                     </div>
                 </div>
 

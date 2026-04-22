@@ -3,10 +3,48 @@
 @section('content')
 <div class="container">
     <h1>Lista de Pacientes</h1>
-    <div>
-        <a href="{{ route('pacientes.create') }}" class="btn btn-primary">Agregar Paciente</a>
+    <div class="d-flex flex-wrap gap-2 mb-3">
+        <a href="{{ route('pacientes.create') }}" class="btn btn-primary"><i class="bi bi-person-plus"></i> Agregar Paciente</a>
+        <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#modalCargaMasiva">
+            <i class="bi bi-upload"></i> Carga Masiva
+        </button>
         <a href="{{ route('areas.index') }}" class="btn btn-secondary">Gestionar Áreas</a>
         <a href="{{ route('estados.index') }}" class="btn btn-secondary">Gestionar Estados</a>
+    </div>
+
+    {{-- Modal Carga Masiva --}}
+    <div class="modal fade" id="modalCargaMasiva" tabindex="-1" aria-labelledby="lblCargaMasiva" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content" style="border-radius:14px;">
+                <div class="modal-header bg-success text-white" style="border-radius:14px 14px 0 0;">
+                    <h5 class="modal-title" id="lblCargaMasiva">⬆ Carga Masiva de Pacientes</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+                </div>
+                <div class="modal-body">
+                    <p class="mb-1">1. Descarga la plantilla y rellena los datos de los pacientes.</p>
+                    <a href="{{ route('pacientes.plantilla') }}" class="btn btn-outline-success btn-sm mb-3">
+                        <i class="bi bi-file-earmark-spreadsheet"></i> Descargar Plantilla CSV
+                    </a>
+                    <p class="mb-1">2. Sube el archivo CSV completado.</p>
+                    <form action="{{ route('pacientes.importar') }}" method="POST" enctype="multipart/form-data">
+                        @csrf
+                        <div class="mb-3">
+                            <input type="file" name="archivo_csv" id="archivo_csv" class="form-control" accept=".csv" required>
+                            @error('archivo_csv')
+                                <div class="text-danger small mt-1">{{ $message }}</div>
+                            @enderror
+                        </div>
+                        <div class="d-flex justify-content-end gap-2">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                            <button type="submit" class="btn btn-success">Importar</button>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer text-muted small" style="font-size:.8rem;">
+                    Columnas requeridas: nombre, identificacion, genero, procedimiento, area_id, estado_id, fecha_cita, hora_cita
+                </div>
+            </div>
+        </div>
     </div>
 
     <!-- Formulario de búsqueda -->
@@ -20,6 +58,35 @@
 
     @if(session('success'))
         <div class="alert alert-success">{{ session('success') }}</div>
+    @endif
+
+    {{-- Resultados de carga masiva --}}
+    @if(session('importados') !== null)
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            <strong>✔ Importación completada:</strong>
+            {{ session('importados') }} paciente(s) importado(s)
+            @if(session('duplicados'))
+                , {{ session('duplicados') }} duplicado(s) omitido(s)
+            @endif.
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    @endif
+    @if(session('error_importacion'))
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            {{ session('error_importacion') }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    @endif
+    @if(session('errores_importacion') && count(session('errores_importacion')) > 0)
+        <div class="alert alert-warning alert-dismissible fade show" role="alert">
+            <strong>⚠ Errores en algunas filas:</strong>
+            <ul class="mb-0 mt-1">
+                @foreach(session('errores_importacion') as $err)
+                    <li>{{ $err }}</li>
+                @endforeach
+            </ul>
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
     @endif
 
     <table class="table table-hover table-bordered">

@@ -31,6 +31,8 @@ require __DIR__.'/auth.php';
 Auth::routes();
 
 Route::middleware(['auth'])->group(function () {
+    Route::get('/pacientes/plantilla', [PacienteController::class, 'plantilla'])->name('pacientes.plantilla');
+    Route::post('/pacientes/importar', [PacienteController::class, 'importar'])->name('pacientes.importar');
     Route::resource('pacientes', PacienteController::class);
 });
 Route::resource('pacientes', PacienteController::class)->middleware('auth');
