@@ -25,7 +25,7 @@
                     <a href="{{ route('pacientes.plantilla') }}" class="btn btn-outline-success btn-sm mb-3">
                         <i class="bi bi-file-earmark-spreadsheet"></i> Descargar Plantilla CSV
                     </a>
-                    <p class="mb-1">2. Sube el archivo CSV completado.</p>
+                    <p class="mb-1">2. Sube el archivo CSV completado. <br> <strong>hora_cita no debe llenarse en el archivo.</strong></p>
                     <form action="{{ route('pacientes.importar') }}" method="POST" enctype="multipart/form-data">
                         @csrf
                         <div class="mb-3">
@@ -41,7 +41,7 @@
                     </form>
                 </div>
                 <div class="modal-footer text-muted small" style="font-size:.8rem;">
-                    Columnas requeridas: nombre, identificacion, genero, procedimiento, area_id, estado_id, fecha_cita, hora_cita
+                    Columnas requeridas: nombre, identificacion, genero, procedimiento, area_id, estado_id, fecha_cita. hora_cita no debe llenarse en el archivo.
                 </div>
             </div>
         </div>
